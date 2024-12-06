@@ -162,7 +162,7 @@ def parse_elffile(elffile, prefix, appdir, riot_base=None):
                    r"(?P<type>[tbdTDB]) "
                    r"(?P<sym>[0-9a-zA-Z_$.]+)\s+"
                    r"(.*/)?"
-                   r"("
+                   r"(?P<dir>"
                    r"{appdir}|"
                    r"{riot_base}|"
                    r".cargo/registry/src/[^/]+|"
@@ -171,7 +171,7 @@ def parse_elffile(elffile, prefix, appdir, riot_base=None):
                    r"ip-over-ble_experiments|"  # HACK...
                    r"{appdir}/.*bin/pkg"
                    r")/"
-                   r"(?P<path>.+)/"
+                   r"((?P<path>.+)/)?"
                    r"(?P<file>[0-9a-zA-Z_-]+\.(c|h|rs)):"
                    r"(?P<line>\d+)$".format(riot_base=riot_base,
                                             appdir=appdir))
@@ -180,7 +180,14 @@ def parse_elffile(elffile, prefix, appdir, riot_base=None):
         if m:
             d = {'arcv': '', 'obj': '', 'size': -1, 'alias': []}
             d.update(m.groupdict())
+            if d['path'] is None:
+                d['path'] = ""
             d['path'] = d['path'].split(path.sep)
+            if d['dir'] == appdir:
+                if d['path'][0] == "":
+                    d['path'][0] = "app"                
+                else:
+                    d['path'].insert(0, "app")
             d['line'] = int(d['line'])
             d['addr'] = int(d['addr'], 16)
             d['type'] = d['type'].lower()
