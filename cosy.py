@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-from os import path
+from os import path, environ
 from pathlib import Path
 import argparse
 import re
@@ -153,9 +153,11 @@ def parse_elffile(elffile, prefix, appdir, riot_base=None):
     rbase = ["riotbuild/riotproject"]
     if riot_base:
         rbase.append(riot_base.strip("/"))
-    else:
-        rbase.append("RIOT")
-        rbase.append("riotbuild/riotbase")
+
+    rbase.append("RIOT")
+    rbase.append("riotbuild/riotbase")
+    if "BUILD_DIR" in environ:
+        rbase.append(environ["BUILD_DIR"])
     riot_base = "|".join([f'{p}/build|{p}' for p in rbase])
 
     c = re.compile(r"(?P<addr>[0-9a-f]+) "
