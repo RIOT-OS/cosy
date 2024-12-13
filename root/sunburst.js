@@ -30,6 +30,7 @@ var b = {
 
 // Mapping of step names to colors.
 var colors = {
+  "app": "#d98b8f",
   "core": "#a173d1",
   "cpu": "#7b615c",
   "boards": "#de783b",
