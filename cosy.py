@@ -166,20 +166,19 @@ def parse_elffile(elffile, prefix, appdir, riot_base=None):
                    r"(?P<sym>[0-9a-zA-Z_$.]+)\s+"
                    r"(.*/)?"
                    r"("
-                   r"{appdir}|"
                    r"{riot_base}|"
                    r".cargo/registry/src/[^/]+|"
                    r".cargo/git/checkouts|"
                    r"/rustc/[0-9a-f]+/?/library|"
                    r"ip-over-ble_experiments|"  # HACK...
-                   r"{appdir}/.*bin/pkg"
+                   r"RIOT/app/.*bin/pkg"
                    r")/"
                    r"(?P<path>.+)/"
                    r"(?P<file>[0-9a-zA-Z_-]+\.(c|h|rs)):"
-                   r"(?P<line>\d+)$".format(riot_base=riot_base,
-                                            appdir=appdir))
+                   r"(?P<line>\d+)$".format(riot_base=riot_base))
     for line in dump.splitlines():
-        m = c.match(line.decode("utf-8"))
+        line = line.decode("utf-8").replace(appdir, "RIOT/app")
+        m = c.match(line)
         if m:
             d = {'arcv': '', 'obj': '', 'size': -1, 'alias': []}
             d.update(m.groupdict())
